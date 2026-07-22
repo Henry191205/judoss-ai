@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judoss AI | Prompt Operating System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-bg"></div>
+  <main class="container">
+    <header class="hero">
+      <p class="kicker">Prompt AI Operating System</p>
+      <h1>Judoss AI</h1>
+      <p class="subtitle">
+        Version 2.0 — production flow engine for prompt creation, response workflows,
+        and structured output generation.
+      </p>
+      <div class="function-badges" aria-label="Core function badges">
+        <span class="function-badge active" data-badge="create">Create</span>
+        <span class="function-badge" data-badge="reply">Reply</span>
+      </div>
+    </header>
+
+    <section class="grid two-col" aria-label="Prompt workflow form">
+      <form id="prompt-form" class="panel card">
+        <h2>Create your request</h2>
+        <p>Fill the fields and trigger Judoss OS to build a structured execution JSON pack.</p>
+
+        <label>
+          <span>Core function</span>
+          <div class="function-toggle" role="radiogroup" aria-label="Core function">
+            <button type="button" data-function="create" class="chip active" aria-pressed="true">Create</button>
+            <button type="button" data-function="reply" class="chip" aria-pressed="false">Reply</button>
+          </div>
+        </label>
+
+        <label>
+          <span>Objective</span>
+          <input id="objective" type="text" placeholder="e.g. Build a prompt generator for mobile app ideas" />
+        </label>
+
+        <label>
+          <span>Target platform</span>
+          <input id="platform" type="text" placeholder="e.g. web, iOS, Android, desktop" />
+        </label>
+
+        <label>
+          <span>Mode</span>
+          <select id="mode">
+            <option>CODE</option>
+            <option>IMAGE</option>
+            <option>PLAN</option>
+            <option>DEBUG</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Model profile</span>
+          <select id="profile">
+            <option>Judoss Core (Creative)</option>
+            <option>Judoss Core (Analytical)</option>
+            <option>Vision Mode</option>
+            <option>Image Prompt Specialist</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Temperature</span>
+          <input id="temperature" type="range" min="0" max="1" step="0.1" value="0.4" />
+        </label>
+
+        <label>
+          <span>Constraints / requirements</span>
+          <textarea id="constraints" rows="4" placeholder="Style, limits, stack preference, file format, restrictions"></textarea>
+        </label>
+
+        <label>
+          <span>Inputs / assets</span>
+          <textarea id="assets" rows="3" placeholder="Docs, screenshots, sample outputs, brand guidelines"></textarea>
+        </label>
+
+        <label>
+          <span>Output format</span>
+          <select id="output-format">
+            <option>JSON</option>
+            <option>Markdown</option>
+            <option>Prompt text</option>
+          </select>
+        </label>
+
+        <button id="run-btn" type="button">Run workflow pack</button>
+      </form>
+
+      <aside class="panel card output">
+        <div class="status-strip">
+          <span>Model runtime</span>
+          <strong id="runtime-value">Judoss Core (Creative)</strong>
+          <span id="function-chip" class="chip small active">create</span>
+        </div>
+
+        <h2>Alignment preview</h2>
+        <p class="muted">JSON output for next-step execution</p>
+
+        <div class="kv">
+          <span>Mode</span><strong id="kv-mode">PLAN</strong>
+        </div>
+        <div class="kv">
+          <span>Process</span><strong>Analyze → Plan → Produce → Validate</strong>
+        </div>
+        <div class="kv">
+          <span>Function key</span><strong id="kv-function">create_prompt()</strong>
+        </div>
+        <div class="kv">
+          <span>Output format</span><strong id="kv-output-format">JSON</strong>
+        </div>
+
+        <pre id="preview" class="preview json-box">
+{
+  "mode": "PLAN",
+  "objective": "Not provided",
+  "assumptions": ["Awaiting user input."],
+  "plan": ["Collect required request fields."],
+  "output": [],
+  "risks": ["Missing inputs can create incorrect outputs."],
+  "next_steps": ["Fill fields and run workflow pack"]
+}
+        </pre>
+
+        <div class="actions">
+          <button id="copy-btn" type="button" class="ghost">Copy JSON</button>
+          <button id="export-btn" type="button" class="ghost">Export pack</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel process" aria-label="How Judoss AI aligns your workflow">
+      <h2>How Judoss AI stays aligned</h2>
+      <div class="steps">
+        <article>
+          <span class="num">01</span>
+          <h3>Analyze</h3>
+          <p>Capture objective, platform, constraints, and missing inputs from the request.</p>
+        </article>
+
+        <article>
+          <span class="num">02</span>
+          <h3>Plan</h3>
+          <p>Resolve one mode and map execution schema with assumptions, deliverables, and trade-offs.</p>
+        </article>
+
+        <article>
+          <span class="num">03</span>
+          <h3>Produce</h3>
+          <p>Generate complete prompt package, image instructions, code scaffold, or debugging plan.</p>
+        </article>
+
+        <article>
+          <span class="num">04</span>
+          <h3>Validate</h3>
+          <p>Attach risks, edge cases, and next steps so output can be run immediately.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 Judoss AI · Prompt generation studio for serious builders</p>
+    </footer>
+  </main>
+
+  <script>
+    const functionButtons = document.querySelectorAll('.function-toggle .chip');
+    const headerBadges = document.querySelectorAll('.function-badge');
+    const functionChip = document.getElementById('function-chip');
+
+    const modeEl = document.getElementById('mode');
+    const profileEl = document.getElementById('profile');
+    const objectiveEl = document.getElementById('objective');
+    const platformEl = document.getElementById('platform');
+    const tempEl = document.getElementById('temperature');
+    const constraintsEl = document.getElementById('constraints');
+    const assetsEl = document.getElementById('assets');
+    const outputFormatEl = document.getElementById('output-format');
+
+    const runtimeEl = document.getElementById('runtime-value');
+    const kvMode = document.getElementById('kv-mode');
+    const kvFunction = document.getElementById('kv-function');
+    const kvOutputFormat = document.getElementById('kv-output-format');
+
+    const previewEl = document.getElementById('preview');
+    const runBtn = document.getElementById('run-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const exportBtn = document.getElementById('export-btn');
+
+    let selectedFunction = 'create';
+
+    const functionMap = {
+      create: {
+        key: 'create_prompt',
+        verb: 'generate a complete prompt blueprint'
+      },
+      reply: {
+        key: 'reply_prompt',
+        verb: 'compose response-ready, context-aware output'
+      }
+    };
+
+    const requiredQuestions = {
+      objective: 'What is the exact objective you want the AI to achieve?',
+      platform: 'What exact target platform should the output be built for?',
+      constraints: 'What are your constraints, limits, or compliance requirements?',
+      assets: 'Please list required inputs/assets the model must use.',
+      outputFormat: 'Which output format should be returned?'
+    };
+
+    function setActiveFunction(fn) {
+      selectedFunction = fn;
+
+      functionButtons.forEach((btn) => {
+        const active = btn.dataset.function === fn;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
+      headerBadges.forEach((badge) => {
+        badge.classList.toggle('active', badge.dataset.badge === fn);
+      });
+
+      functionChip.textContent = fn;
+      functionChip.classList.toggle('active', true);
+      kvFunction.textContent = `${functionMap[fn].key}()`;
+    }
+
+    function getPayload() {
+      return {
+        objective: objectiveEl.value.trim(),
+        target_platform: platformEl.value.trim(),
+        mode: modeEl.value,
+        constraints: constraintsEl.value.trim(),
+        assets: assetsEl.value.trim(),
+        output_format: outputFormatEl.value,
+        model_profile: profileEl.value,
+        temperature: Number(tempEl.value),
+        core_function: functionMap[selectedFunction].key,
+        functionVerb: functionMap[selectedFunction].verb
+      };
+    }
+
+    function getMissingQuestions(payload) {
+      const missing = [];
+
+      if (!payload.objective) {
+        missing.push(requiredQuestions.objective);
+      }
+      if (!payload.target_platform) {
+        missing.push(requiredQuestions.platform);
+      }
+      if (!payload.constraints) {
+        missing.push(requiredQuestions.constraints);
+      }
+      if (!payload.assets) {
+        missing.push(requiredQuestions.assets);
+      }
+      if (!payload.output_format) {
+        missing.push(requiredQuestions.outputFormat);
+      }
+
+      return missing.slice(0, 3).map((question, index) => `${index + 1}) ${question}`);
+    }
+
+    function codeOutput(payload) {
+      const safeTitle = payload.objective ? payload.objective : 'Generated Project';
+
+      return [
+        {
+          file: 'index.html',
+          content:
+`<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${safeTitle}</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <h1>${safeTitle}</h1>
+    <p>Target platform: ${payload.target_platform}</p>
+    <p>Mode: CODE</p>
+    <button id="start-btn">Run</button>
+  </main>
+  <script src="app.js"><\/script>
+</body>
+</html>`
+        },
+        {
+          file: 'styles.css',
+          content:
+`* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #f0f4ff;
+  background: radial-gradient(circle at top, #2a2a2a, #0a0a0a);
+}
+
+.app-shell {
+  text-align: center;
+}
+
+button {
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: #2e2e2e;
+}`
+        },
+        {
+          file: 'app.js',
+          content:
+`document.getElementById('start-btn').addEventListener('click', () => {
+  const message = 'Judoss AI workflow pack created on ' + new Date().toLocaleString();
+  alert(message);
+});`
+        }
+      ];
+    }
+
+    function imageOutput(payload) {
+      return [
+        {
+          prompt:
+`${payload.objective}. Create a high-clarity, polished visual aligned to ${payload.target_platform}. ` +
+            `Keep composition clean, modern, and consistent with ${payload.model_profile}.`,
+          negative_prompt: 'low resolution, blur, artifacts, watermark, text errors, extra objects, color banding',
+          technical_settings: {
+            aspect_ratio: '16:9',
+            resolution: '1024x576',
+            sampler: 'DPM++ 2M Karras',
+            cfg_scale: 7,
+            steps: 28,
+            seed: 'random'
+          }
+        }
+      ];
+    }
+
+    function planOutput(payload) {
+      return [
+        {
+          phase: 'architecture',
+          tasks: [
+            'Define system boundaries for the requested target platform.',
+            `Align all deliverables to ${payload.constraints || 'provided constraints'}.`,
+            `Ensure output format is ${payload.output_format}.`
+          ]
+        },
+        {
+          phase: 'tradeoffs',
+          items: [
+            'Speed vs reliability in the first output pass.',
+            'Small dependency set vs feature richness.',
+            'Strict output schema vs flexibility.'
+          ]
+        },
+        {
+          phase: 'milestones',
+          items: [
+            'Draft complete plan and assumptions.',
+            'Generate validation checks and risks.',
+            'Prepare next implementation cycle.'
+          ]
+        }
+      ];
+    }
+
+    function debugOutput(payload) {
+      return [
+        {
+          symptoms: [
+            'Unexpected outputs for selected mode.',
+            'Inconsistent behavior across model calls.'
+          ]
+        },
+        {
+          investigation_steps: [
+            'Validate objective clarity and required constraints.',
+            'Check profile and temperature fit for deterministic output.',
+            `Compare against expected format: ${payload.output_format}.`
+          ]
+        },
+        {
+          fix_plan: [
+            'Re-run with tighter field-level constraints.',
+            'Trim prompt complexity and keep one required output target.',
+            'Apply step-by-step verification before final delivery.'
+          ]
+        }
+      ];
+    }
+
+    function modePlan(mode) {
+      const maps = {
+        CODE: [
+          'Parse request and constraints.',
+          'Generate complete runnable file list.',
+          'Attach setup and next-step checks.'
+        ],
+        IMAGE: [
+          'Convert objective to precise visual instructions.',
+          'Generate prompt + negative prompt + settings.',
+          'Return settings adapted to chosen format.'
+        ],
+        PLAN: [
+          'Design architecture and boundaries.',
+          'List tradeoffs with rationale.',
+          'Define milestone gates and acceptance checks.'
+        ],
+        DEBUG: [
+          'Reproduce failure with payload snapshot.',
+          'Find likely root causes and assumptions.',
+          'Create minimal safe fix order.'
+        ]
+      };
+
+      return maps[mode];
+    }
+
+    function buildPack() {
+      const payload = getPayload();
+
+      runtimeEl.textContent = payload.model_profile;
+      kvMode.textContent = payload.mode;
+      kvOutputFormat.textContent = payload.output_format;
+      kvFunction.textContent = `${payload.core_function}()`;
+
+      const missing = getMissingQuestions(payload);
+      if (missing.length > 0) {
+        const askPack = {
+          mode: payload.mode,
+          objective: payload.objective || 'Not provided',
+          assumptions: [
+            `Core function is ${selectedFunction} (${payload.functionVerb}).`,
+            `Model profile is ${payload.model_profile}.`
+          ],
+          plan: ['Collect missing fields before generation.'],
+          output: missing,
+          risks: ['Missing required fields can cause wrong output.'],
+          next_steps: ['Provide the missing values and run again.']
+        };
+        previewEl.textContent = JSON.stringify(askPack, null, 2);
+        return askPack;
+      }
+
+      let output;
+      if (payload.mode === 'CODE') {
+        output = codeOutput(payload);
+      } else if (payload.mode === 'IMAGE') {
+        output = imageOutput(payload);
+      } else if (payload.mode === 'DEBUG') {
+        output = debugOutput(payload);
+      } else {
+        output = planOutput(payload);
+      }
+
+      const pack = {
+        mode: payload.mode,
+        objective: payload.objective,
+        assumptions: [
+          `Function selected: ${payload.core_function}().`,
+          `Target platform: ${payload.target_platform}.`,
+          `Constraints string set length: ${payload.constraints.length} characters.`
+        ],
+        plan: modePlan(payload.mode),
+        output,
+        risks: [
+          'Under-defined assets can reduce output reliability.',
+          'Output can be too verbose for strict API limits.'
+        ],
+        next_steps: [
+          'Review output schema and regenerate if needed.',
+          `Apply returned ${payload.mode.toLowerCase()} artifacts in ${payload.output_format}.`,
+          'Run a validation pass against your real inputs.'
+        ]
+      };
+
+      previewEl.textContent = JSON.stringify(pack, null, 2);
+      return pack;
+    }
+
+    functionButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setActiveFunction(btn.dataset.function);
+      });
+    });
+
+    runBtn.addEventListener('click', () => {
+      buildPack();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(previewEl.textContent);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = 'Copied';
+      setTimeout(() => {
+        copyBtn.textContent = original;
+      }, 1200);
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const blob = new Blob([previewEl.textContent], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `judoss-${selectedFunction}-pack.json`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    setActiveFunction(selectedFunction);
+    buildPack();
+  </script>
+</body>
+</html>
